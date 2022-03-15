@@ -1,4 +1,4 @@
-#  RPG using python built-in libraries
+#  RPG usando as bibliotecas próprias do Python
 from random import randint
 from time import sleep
 
@@ -38,13 +38,6 @@ def menu_batalha(nome_inimigo, hp_inimigo, nome_player, hp_player):  # Menu de b
     print('{:<10} {}HP'.format(nome_player, '[]' * hp_player))
 
 
-# Inicializando variáveis
-sair = False
-opcao = 0
-card = random(opcao)
-batalha = False
-turno = 0
-
 # Carta de monstro, Nome -> HP -> Resistencia -> Dano
 Cmo1 = ['Mago', 3, 0, 4]
 Cmo2 = ['Espadachim', 4, 1, 3]
@@ -65,6 +58,12 @@ Cartas_joker = [Cj1, Cj2, Cj3]
 
 player = ['', 5, Cartas_monstro[random(card)], Cartas_magia[random(card)], Cartas_joker[random(card)]]  # Player
 inimigo = ['Enemy', 5, Cartas_monstro[random(card)], Cartas_magia[random(card)], Cartas_joker[random(card)]]  # Inimigo
+
+# Inicializando variáveis
+sair = batalha = False
+opcao = turno = 0
+card = random(opcao)
+
 '''print(Cartas_monstro)  # Teste dos jogadores
 print(Cartas_magia)
 print(Cartas_joker)
