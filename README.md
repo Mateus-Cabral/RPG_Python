@@ -47,13 +47,11 @@ Cards:
             SPD: 0
 
     Magic cards: buffing/nerfing mechanism. You can use 1 magic card per turn
-       
         Card_1 - Buffs the dmg in 1 point - "Aumenta o dano em 1"
         Card_2 - Buffs the resistance in 1 point - "Aumenta a resistência em 1 ponto"
         Card_3 - Buffs the creatures hp in 1 point - "Aumenta o hp em 1"
    
     Joker Cards: other mecanics. Alike magic cards but with more exotic effects.
-
         Card_1 - Skips the battle for 1 turn (used magic cards are still lost and replaced) - "Pula o turno"
         Card_2 - Blocks the magic from your oponent - "Nega a magia do oponente"
         Card_3 - Deals 1 dmg directly to your oponent's hp  
