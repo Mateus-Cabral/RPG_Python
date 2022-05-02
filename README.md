@@ -28,6 +28,7 @@ Main Mechanics:
 
 Cards:
     Creatures: attacking mechanism, can be boosted by magic cards. Creatures atack head to head
+    
         Elf Mage (alias "Mago Élfico") - A more attack focused character  
             HP:  3 
             DEF: 0
