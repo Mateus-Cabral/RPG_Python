@@ -16,9 +16,24 @@ def action():
 
 
 # Card change
-def random(a):
+def random():
     a = randint(0, 2)
     return a
+
+
+def creature_card_change(card):
+    card = creatureCards[random()]
+    return card
+
+
+def magic_card_change(card):
+    card = magicCards[random()]
+    return card
+
+
+def joker_card_change(card):
+    card = jokerCards[random()]
+    return card
 
 
 # Player's name with user input
@@ -75,6 +90,20 @@ def battle_menu(nome_inimigo, hp_inimigo, nome_player, hp_player):
     print('{:<10} {}HP'.format(nome_player, '[]' * hp_player))
 
 
+def enemy_prepare_phase(creature, magic, joker):
+    a = randint(0, 1)
+    if a == 0:
+        magic_used = True
+        joker_used = False
+    elif a == 1:
+        magic_used = False
+        joker_used = True
+    else:
+        magic_used = True
+        joker_used = True
+    return magic_used, joker_used
+
+
 def prepare_phase(creature, magic, joker):
     magic_used = False
     joker_used = False
@@ -111,17 +140,138 @@ def prepare_phase(creature, magic, joker):
 
         elif resp == 4:
             print("Que comece a batalha!")
-            sleep(1.5)
+            sleep(0.75)
             break
-    return creature, magic, joker
+    return magic_used, joker_used
+
+
+def battle(player_actions, enemy_actions):
+    skip = False
+    enemy_win = False
+    player_win = False
+
+    # Joker interactions
+    if player_actions[1]:
+        if player['joker'][2] == 'pula_turno':
+            skip = True
+            nome = player['nome']
+            print(f'Você gastou seu coringa para evitar esse turno!')
+        if player['joker'][2] == 'nega_magia':
+            enemy_actions[0] = False
+            print(f'Você negou a magia do oponente!')
+        if player['joker'][2] == 'dano_hp':
+            enemy['hp'] -= 1
+            print(f'Isso deve ter doído... Seu oponente perdeu 1 ponto de vida!')
+        else:
+            print(f'Você decidiu guardar seu coringa.')
+
+    print("Esperando oponente...")
+    sleep(1)
+
+    if not skip:
+        if enemy_actions[1]:
+            if enemy['joker'][2] == 'pula_turno':
+                skip = True
+                print(f'O jogador {enemy["nome"]} gastou seu coringa para evitar esse turno!')
+            if enemy['joker'][2] == 'nega_magia':
+                player_actions[0] = False
+                print(f'O jogador {enemy["nome"]} gastou seu coringa para negar sua magia!')
+            if enemy['joker'][2] == 'dano_hp':
+                player['hp'] -= 1
+                print(f'O jogador {enemy["nome"]} gastou seu coringa para te dar 1 de dano. Espero que não tenha '
+                      f'doído... ')
+        else:
+            print(f'O jogador {enemy["nome"]} decidiu guardar seu coringa.')
+
+    if not skip:
+        # Magics interactions
+        if player_actions[0]:
+            if player['magic'][2] == 'buff_atk':
+                player['creature'][3] += 1
+                print(f'{player["creature"][0]} se sente inspirado. Seu ataque foi aprimorado em 1 ponto')
+            if player['magic'][2] == 'buff_def':
+                player['creature'][2] += 1
+                print(f'{player["creature"][0]} se sente confiante. Sua defesa foi aprimorada em 1 ponto')
+            if player['magic'][2] == 'buff_hp':
+                player['creature'][1] += 1
+                print(f'{player["creature"][0]} se sente revigorado. Sua vida foi aprimorada em 1 ponto')
+
+        if enemy_actions[0]:
+            if enemy['magic'][2] == 'buff_atk':
+                enemy['creature'][3] += 1
+                print(f'O {enemy["creature"][0]} do oponente se preparou para um ataque. Seu ataque foi aprimorado em '
+                      f'1 ponto')
+            if enemy['magic'][2] == 'buff_def':
+                enemy['creature'][2] += 1
+                print(f'O {enemy["creature"][0]} do oponente sente confiante. Sua defesa foi aprimorada em 1 ponto')
+            if enemy['magic'][2] == 'buff_hp':
+                enemy['creature'][1] += 1
+                print(f'O {enemy["creature"][0]} do oponente foi curado. Sua vida foi aprimorada em 1 ponto')
+
+        # Battle interaction
+        if player['creature'][4] > enemy['creature'][4]:
+            print(f'{player["creature"][0]} toma a dianteira e se prepara para atacar!')
+            print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
+            if enemy["creature"][1] == 0:
+                print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
+                player_win = True
+            else:
+                print(f'e sobreviveu com {enemy["creature"][1]} pontos de vida.')
+                print(f'Agora {enemy["creature"][0]} se prepara para atacar!')
+                print(f'{player["creature"][0]} tomou {enemy["creature"][3]} de dano...', end=' ')
+                if player["creature"][1] == 0:
+                    print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
+                    enemy_win = True
+
+        elif player['creature'][4] < enemy['creature'][4]:
+            print(f'{enemy["creature"][0]} toma a dianteira e se prepara para atacar!')
+            print(f'{player["creature"][0]} tomou {enemy["creature"][3]} de dano...', end=' ')
+            if enemy["creature"][1] == 0:
+                print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
+                player_win = True
+            else:
+                print(f'e sobreviveu com {player["creature"][1]} pontos de vida.')
+                print(f'Agora {player["creature"][0]} se prepara para atacar!')
+                print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
+                if enemy["creature"][1] == 0:
+                    print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
+                    enemy_win = True
+
+        if player_win:
+            print(f'Parabéns! Você ganhou a batalha e seu oponente tomou 1 de dano')
+            enemy["hp"] -= 1
+        elif enemy_win:
+            print(f'Mais sorte da próxima vez... O {enemy["nome"]} ganhou dessa vez.')
+            print(f'Você tomou 1 de dano.')
+            player["hp"] -= 1
+        else:
+            print("Ninguém morreu dessa vez, se prepare para a próxima batalha!")
+
+        if player_action[0]:
+            player_action[0] = not player_action[0]
+            player["magic"] = magic_card_change(player["magic"])
+        if player_action[1]:
+            player_action[1] = not player_action[1]
+            player["joker"] = joker_card_change(enemy["joker"])
+        if enemy_action[0]:
+            player_action[0] = not player_action[0]
+            player["magic"] = magic_card_change(enemy["magic"])
+        if enemy_action[1]:
+            enemy_action[1] = not player_action[1]
+            enemy["joker"] = joker_card_change(enemy["joker"])
 
 
 # Initializing Variables
 leave = False
 option = 0
-card = 0
-battle = False
+# card = 0
+battle_ = False
 turn = 0
+
+# Checks if the magic or Joker Card is being used
+# 0 - Magic | 1 - Joker
+player_action = [False, False]
+enemy_action = [False, False]
 
 
 # Creature Card, Name -> HP -> Resistance -> Damage -> Speed
@@ -139,23 +289,35 @@ magicCards = [cma1, cma2, cma3]
 
 
 # Joker Card, Description -> Effect
-cj1 = ['Pula o turno', 'Pula_turno']
-cj2 = ['Nega a magia do oponente', 'Nega_magia']
-cj3 = ['Causa 1 de dano diretamente ao oponente', 'Dano_HP']
+cj1 = ['Pula o turno', 'pula_turno']
+cj2 = ['Nega a magia do oponente', 'nega_magia']
+cj3 = ['Causa 1 de dano diretamente ao oponente', 'dano_hp']
 jokerCards = [cj1, cj2, cj3]
 
 
 # Player hp and random cards initialized
 # Name -> HP -> Creature Card -> Magic Card -> Joker Card
-player = ['', 5, creatureCards[random(card)], magicCards[random(card)], jokerCards[random(card)]]
+player = {
+    "nome": '',
+    "hp": 5,
+    "creature": creatureCards[random()],
+    "magic": magicCards[random()],
+    "joker": jokerCards[random()]
+}
+
+enemy = {
+    "nome": 'Enemy',
+    "hp": 5,
+    "creature": creatureCards[random()],
+    "magic": magicCards[random()],
+    "joker": jokerCards[random()]
+}
+
+# player = ['', 5, creatureCards[random(card)], magicCards[random(card)], jokerCards[random(card)]]
 # Enemy hp and random cards initialized
 # Name -> HP -> Creature Card -> Magic Card -> Joker Card
-enemy = ['Enemy', 5, creatureCards[random(card)], magicCards[random(card)], jokerCards[random(card)]]
-'''print(Cartas_monstro)  #Test
-print(Cartas_magia)
-print(Cartas_joker)
-print(player)
-'''
+# enemy = ['Enemy', 5, creatureCards[random(card)], magicCards[random(card)], jokerCards[random(card)]]
+
 
 # Starting the game
 player[0] = new_name(player[0])
@@ -165,11 +327,12 @@ while not leave:
     option, leave, battle = main_menu(option, leave, battle)
     # print('Fim menu principal')
     # print(opcao, sair, batalha)
-    if battle:
+    if battle_:
         # print('Começando batalha')
         # print('Menu de batalha')
-        battle_menu(enemy[0], enemy[1], player[0], player[1])
-        prepare_phase(player[2], player[3], player[4])
-
+        battle_menu(enemy['nome'], enemy['hp'], player['nome'], player['hp'])
+        player_action[0], player_action[1] = prepare_phase(player['creature'], player['magic'], player['joker'])
+        enemy_action[0], enemy_action[1] = enemy_prepare_phase(enemy['creature'], enemy['magic'], player['joker'])
+        battle(player_action, enemy_action)
 
 print('Fim')
