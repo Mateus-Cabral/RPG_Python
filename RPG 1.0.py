@@ -21,23 +21,23 @@ def random():
     return a
 
 
-def creature_card_change(card):
+def creature_card_change():
     card = creatureCards[random()]
     return card
 
 
-def magic_card_change(card):
+def magic_card_change():
     card = magicCards[random()]
     return card
 
 
-def joker_card_change(card):
+def joker_card_change():
     card = jokerCards[random()]
     return card
 
 
 # Player's name with user input
-def new_name(a):
+def new_name():
 
     a = input('Qual a sua graça? ').strip()
     print('Tem certeza de que quer o nome {}?'.format(a))
@@ -61,9 +61,9 @@ def new_name(a):
 
 
 # Main Menu layout
-def main_menu(a, b, c):
+def main_menu(b, c):
     print('RPG 1.0'
-          f'\nSaudações, {player[0]}'
+          f'\nSaudações, {player["nome"]}'
           '\n1 Iniciar '
           '\n2 Configuração da música'
           '\n3 Renomear'
@@ -71,17 +71,17 @@ def main_menu(a, b, c):
 
     a = action()
     if a == 1:
-        print('Let the games begin!')
+        print('Se prepare!')
         c = True
     elif a == 2:
         print('Trabalho em progresso, volte em uma futura versão.')
     elif a == 3:
-        player[0] = new_name(player[0])
+        player["nome"] = new_name()
     else:
         print('Obrigado pelo seu tempo!')
         b = True
     sleep(1.5)
-    return a, b, c
+    return b, c
 
 
 # Function for the Battle Screen
@@ -90,8 +90,8 @@ def battle_menu(nome_inimigo, hp_inimigo, nome_player, hp_player):
     print('{:<10} {}HP'.format(nome_player, '[]' * hp_player))
 
 
-def enemy_prepare_phase(creature, magic, joker):
-    a = randint(0, 1)
+def enemy_prepare_phase():
+    a = randint(0, 5)
     if a == 0:
         magic_used = True
         joker_used = False
@@ -107,23 +107,25 @@ def enemy_prepare_phase(creature, magic, joker):
 def prepare_phase(creature, magic, joker):
     magic_used = False
     joker_used = False
+
     while True:
         print(f"1 Criatura: {creature[0]} / Status: Batalhando")
-        print(f"2 Magia: {magic[0]} / Status: Ativo" if magic_used else f"2. Magia: {magic[0]} / Status: Guardar")
-        print(f"3 Coringa: {joker[0]} / Status: Ativo" if joker_used else f"3. Coringa: {joker[0]} / Status: Guardar")
+        print(f"2 Magia: {magic[0]} / Status: Ativo" if magic_used else f"2 Magia: {magic[0]} / Status: Guardar")
+        print(f"3 Coringa: {joker[0]} / Status: Ativo" if joker_used else f"3 Coringa: {joker[0]} / Status: Guardar")
         print("4 Continuar para batalha\n")
         print("Digite o número da carta para mais detalhes.")
         resp = int(input("Ação: "))
+
         if resp == 1:
             print(f"Nome: {creature[0]}"
                   f"\nHP: {creature[1]} | Resistência: {creature[2]}"
                   f"\nDano: {creature[3]} | Velocidade: {creature[4]}")
             print("1 Voltar")
-            resp = int(input("Ação: "))
+            resp = int(input("Digite para 1 retornar: "))
 
         elif resp == 2:
             print(f"Descrição: {magic[0]}")
-            print("Usar essa magia fará com que ela desapareca e seja reposta por outra.")
+            print("Usar essa magia fará com que ela desapareca e seja substituída por outra.")
             print("1 Guardar \n2 Voltar" if magic_used else "1 Usar  \n2 Voltar")
             resp = int(input("Ação: "))
             if resp == 1:
@@ -131,7 +133,7 @@ def prepare_phase(creature, magic, joker):
 
         elif resp == 3:
             print(f"Descrição: {joker[0]}")
-            print("Usar esse coringa fará com que ela desapareca e seja reposta por outra.")
+            print("Usar esse coringa fará com que ela desapareca e seja substituído por outro.")
             print("1 Guardar \n2 Voltar" if joker_used else "1 Usar  \n2 Voltar")
 
             resp = int(input("Ação: "))
@@ -140,8 +142,9 @@ def prepare_phase(creature, magic, joker):
 
         elif resp == 4:
             print("Que comece a batalha!")
-            sleep(0.75)
+            sleep(1.5)
             break
+
     return magic_used, joker_used
 
 
@@ -152,49 +155,60 @@ def battle(player_actions, enemy_actions):
 
     # Joker interactions
     if player_actions[1]:
-        if player['joker'][2] == 'pula_turno':
+        if player['joker'][1] == 'pula_turno':
             skip = True
-            nome = player['nome']
             print(f'Você gastou seu coringa para evitar esse turno!')
-        if player['joker'][2] == 'nega_magia':
+        if player['joker'][1] == 'nega_magia':
             enemy_actions[0] = False
             print(f'Você negou a magia do oponente!')
-        if player['joker'][2] == 'dano_hp':
+        if player['joker'][1] == 'dano_hp':
             enemy['hp'] -= 1
-            print(f'Isso deve ter doído... Seu oponente perdeu 1 ponto de vida!')
-        else:
-            print(f'Você decidiu guardar seu coringa.')
+            print(f'Isso deve ter doído... Seu oponente perdeu 1 ponto de vida por conta de seu coringa!')
+    else:
+        print(f'Você decidiu guardar seu coringa.')
 
     print("Esperando oponente...")
-    sleep(1)
+    sleep(2)
+    print()
 
     if not skip:
         if enemy_actions[1]:
-            if enemy['joker'][2] == 'pula_turno':
+            if enemy['joker'][1] == 'pula_turno':
                 skip = True
                 print(f'O jogador {enemy["nome"]} gastou seu coringa para evitar esse turno!')
-            if enemy['joker'][2] == 'nega_magia':
+            if enemy['joker'][1] == 'nega_magia':
                 player_actions[0] = False
                 print(f'O jogador {enemy["nome"]} gastou seu coringa para negar sua magia!')
-            if enemy['joker'][2] == 'dano_hp':
+            if enemy['joker'][1] == 'dano_hp':
                 player['hp'] -= 1
                 print(f'O jogador {enemy["nome"]} gastou seu coringa para te dar 1 de dano. Espero que não tenha '
                       f'doído... ')
         else:
             print(f'O jogador {enemy["nome"]} decidiu guardar seu coringa.')
 
+    sleep(2)
+    print()
+
     if not skip:
         # Magics interactions
         if player_actions[0]:
             if player['magic'][2] == 'buff_atk':
                 player['creature'][3] += 1
-                print(f'{player["creature"][0]} se sente inspirado. Seu ataque foi aprimorado em 1 ponto')
+                print(f'O {player["creature"][0]} de {player["nome"]} se sente inspirado. Seu ataque foi aprimorado '
+                      f'em 1 ponto')
+
             if player['magic'][2] == 'buff_def':
                 player['creature'][2] += 1
-                print(f'{player["creature"][0]} se sente confiante. Sua defesa foi aprimorada em 1 ponto')
+                print(f'O {player["creature"][0]} de {player["nome"]} se sente confiante. Sua defesa foi aprimorada '
+                      f'em 1 ponto')
+
             if player['magic'][2] == 'buff_hp':
                 player['creature'][1] += 1
-                print(f'{player["creature"][0]} se sente revigorado. Sua vida foi aprimorada em 1 ponto')
+                print(f'O {player["creature"][0]} de {player["nome"]} se sente revigorado. Sua vida foi aprimorada em '
+                      f'1 ponto')
+
+        sleep(2)
+        print()
 
         if enemy_actions[0]:
             if enemy['magic'][2] == 'buff_atk':
@@ -208,33 +222,55 @@ def battle(player_actions, enemy_actions):
                 enemy['creature'][1] += 1
                 print(f'O {enemy["creature"][0]} do oponente foi curado. Sua vida foi aprimorada em 1 ponto')
 
+        sleep(2)
+        print()
+
         # Battle interaction
         if player['creature'][4] > enemy['creature'][4]:
+            print(f'O {player["creature"][0]} de {player["nome"]} toma a dianteira e se prepara para atacar!')
+            print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
+            enemy["creature"][1] -= player["creature"][3]
+            if enemy["creature"][1] <= 0:
+                print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
+                player_win = True
+            else:
+                print(f'e sobreviveu com {enemy["creature"][1]} pontos de vida.')
+                print(f'Agora {enemy["creature"][0]} se prepara para atacar!')
+                print(f'O {player["creature"][0]} de {player["nome"]} tomou {enemy["creature"][3]} de dano...', end=' ')
+                player["creature"][1] -= enemy["creature"][3]
+                if player["creature"][1] == 0:
+                    print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
+                    enemy_win = True
+
+        elif player['creature'][4] < enemy['creature'][4]:
+            print(f'O {enemy["creature"][0]} de {enemy["nome"]} toma a dianteira e se prepara para atacar!')
+            print(f'O {player["creature"][0]} de {player["nome"]} tomou {enemy["creature"][3]} de dano...', end=' ')
+            player["creature"][1] -= enemy["creature"][3]
+            if player["creature"][1] <= 0:
+                print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
+                player_win = True
+            else:
+                print(f'e sobreviveu com {player["creature"][1]} pontos de vida.')
+                print(f'Agora {player["creature"][0]} de {player["nome"]} se prepara para atacar!')
+                print(f'{enemy["creature"][0]} de {enemy["nome"]} tomou {player["creature"][3]} de dano...', end=' ')
+                enemy["creature"][1] -= player["creature"][3]
+                if enemy["creature"][1] == 0:
+                    print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
+                    enemy_win = True
+        else:
             print(f'{player["creature"][0]} toma a dianteira e se prepara para atacar!')
             print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
-            if enemy["creature"][1] == 0:
+            enemy["creature"][1] -= player["creature"][3]
+            if enemy["creature"][1] <= 0:
                 print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                 player_win = True
             else:
                 print(f'e sobreviveu com {enemy["creature"][1]} pontos de vida.')
                 print(f'Agora {enemy["creature"][0]} se prepara para atacar!')
                 print(f'{player["creature"][0]} tomou {enemy["creature"][3]} de dano...', end=' ')
+                player["creature"][1] -= enemy["creature"][3]
                 if player["creature"][1] == 0:
                     print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
-                    enemy_win = True
-
-        elif player['creature'][4] < enemy['creature'][4]:
-            print(f'{enemy["creature"][0]} toma a dianteira e se prepara para atacar!')
-            print(f'{player["creature"][0]} tomou {enemy["creature"][3]} de dano...', end=' ')
-            if enemy["creature"][1] == 0:
-                print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
-                player_win = True
-            else:
-                print(f'e sobreviveu com {player["creature"][1]} pontos de vida.')
-                print(f'Agora {player["creature"][0]} se prepara para atacar!')
-                print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
-                if enemy["creature"][1] == 0:
-                    print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                     enemy_win = True
 
         if player_win:
@@ -246,19 +282,6 @@ def battle(player_actions, enemy_actions):
             player["hp"] -= 1
         else:
             print("Ninguém morreu dessa vez, se prepare para a próxima batalha!")
-
-        if player_action[0]:
-            player_action[0] = not player_action[0]
-            player["magic"] = magic_card_change(player["magic"])
-        if player_action[1]:
-            player_action[1] = not player_action[1]
-            player["joker"] = joker_card_change(enemy["joker"])
-        if enemy_action[0]:
-            player_action[0] = not player_action[0]
-            player["magic"] = magic_card_change(enemy["magic"])
-        if enemy_action[1]:
-            enemy_action[1] = not player_action[1]
-            enemy["joker"] = joker_card_change(enemy["joker"])
 
 
 # Initializing Variables
@@ -320,19 +343,42 @@ enemy = {
 
 
 # Starting the game
-player[0] = new_name(player[0])
+player["nome"] = new_name()
 
 while not leave:
     # print('começo menu principal')
-    option, leave, battle = main_menu(option, leave, battle)
+    leave, battle_ = main_menu(leave, battle)
     # print('Fim menu principal')
     # print(opcao, sair, batalha)
     if battle_:
         # print('Começando batalha')
         # print('Menu de batalha')
-        battle_menu(enemy['nome'], enemy['hp'], player['nome'], player['hp'])
-        player_action[0], player_action[1] = prepare_phase(player['creature'], player['magic'], player['joker'])
-        enemy_action[0], enemy_action[1] = enemy_prepare_phase(enemy['creature'], enemy['magic'], player['joker'])
-        battle(player_action, enemy_action)
+        while player["hp"] != 0 or enemy["hp"] != 0:
+            battle_menu(enemy['nome'], enemy['hp'], player['nome'], player['hp'])
+            player_action[0], player_action[1] = prepare_phase(player['creature'], player['magic'], player['joker'])
+            enemy_action[0], enemy_action[1] = enemy_prepare_phase()
+            battle(player_action, enemy_action)
 
-print('Fim')
+            # Changing cards
+            if player["creature"][1] <= 0:
+                player["creature"] = creature_card_change()
+            if player_action[0]:
+                player_action[0] = not player_action[0]
+                player["magic"] = magic_card_change()
+            if player_action[1]:
+                player_action[1] = not player_action[1]
+                player["joker"] = joker_card_change()
+
+            if enemy["creature"][1] <= 0:
+                enemy["creature"] = creature_card_change()
+            if enemy_action[0]:
+                player_action[0] = not player_action[0]
+                player["magic"] = magic_card_change()
+            if enemy_action[1]:
+                enemy_action[1] = not player_action[1]
+                enemy["joker"] = joker_card_change()
+
+
+print('Fim! Obrigado por jogar :D')
+print("Autor: Mateus Cabral")
+print("Desenvolvido finalizado em: 05/2022")
