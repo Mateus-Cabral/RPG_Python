@@ -62,25 +62,27 @@ def new_name():
 
 # Main Menu layout
 def main_menu(b, c):
-    print('RPG 1.0'
-          f'\nSaudações, {player["nome"]}'
-          '\n1 Iniciar '
-          '\n2 Configuração da música'
-          '\n3 Renomear'
-          '\n4 Sair')
+    while True:
+        print('RPG 1.0'
+              f'\nSaudações, {player["nome"]}'
+              '\n1 Iniciar '
+              '\n2 Configuração da música'
+              '\n3 Renomear'
+              '\n4 Sair')
 
-    a = action()
-    if a == 1:
-        print('Se prepare!')
-        c = True
-    elif a == 2:
-        print('Trabalho em progresso, volte em uma futura versão.')
-    elif a == 3:
-        player["nome"] = new_name()
-    else:
-        print('Obrigado pelo seu tempo!')
-        b = True
-    sleep(1.5)
+        a = action()
+        if a == 1:
+            print('Se prepare!')
+            c = True
+            break
+        elif a == 2:
+            print('Trabalho em progresso, volte em uma futura versão.')
+        elif a == 3:
+            player["nome"] = new_name()
+        else:
+            print('Obrigado pelo seu tempo!')
+            b = True
+        sleep(1.5)
     return b, c
 
 
@@ -258,7 +260,7 @@ def battle(player_actions, enemy_actions):
                     print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                     enemy_win = True
         else:
-            print(f'{player["creature"][0]} toma a dianteira e se prepara para atacar!')
+            print(f'{player["creature"][0]} de {player["nome"]} toma a dianteira e se prepara para atacar!')
             print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
             enemy["creature"][1] -= player["creature"][3]
             if enemy["creature"][1] <= 0:
@@ -266,7 +268,7 @@ def battle(player_actions, enemy_actions):
                 player_win = True
             else:
                 print(f'e sobreviveu com {enemy["creature"][1]} pontos de vida.')
-                print(f'Agora {enemy["creature"][0]} se prepara para atacar!')
+                print(f'Agora {enemy["creature"][0]} do oponente se prepara para atacar!')
                 print(f'{player["creature"][0]} tomou {enemy["creature"][3]} de dano...', end=' ')
                 player["creature"][1] -= enemy["creature"][3]
                 if player["creature"][1] == 0:
