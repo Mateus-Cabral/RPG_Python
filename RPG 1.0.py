@@ -232,6 +232,7 @@ def battle(player_actions, enemy_actions):
             print(f'O {player["creature"][0]} de {player["nome"]} toma a dianteira e se prepara para atacar!')
             print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
             enemy["creature"][1] -= player["creature"][3]
+            sleep(2)
             if enemy["creature"][1] <= 0:
                 print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                 player_win = True
@@ -243,11 +244,13 @@ def battle(player_actions, enemy_actions):
                 if player["creature"][1] == 0:
                     print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
                     enemy_win = True
+            sleep(2)
 
         elif player['creature'][4] < enemy['creature'][4]:
             print(f'O {enemy["creature"][0]} de {enemy["nome"]} toma a dianteira e se prepara para atacar!')
             print(f'O {player["creature"][0]} de {player["nome"]} tomou {enemy["creature"][3]} de dano...', end=' ')
             player["creature"][1] -= enemy["creature"][3]
+            sleep(2)
             if player["creature"][1] <= 0:
                 print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
                 player_win = True
@@ -256,13 +259,16 @@ def battle(player_actions, enemy_actions):
                 print(f'Agora {player["creature"][0]} de {player["nome"]} se prepara para atacar!')
                 print(f'{enemy["creature"][0]} de {enemy["nome"]} tomou {player["creature"][3]} de dano...', end=' ')
                 enemy["creature"][1] -= player["creature"][3]
+                sleep(2)
                 if enemy["creature"][1] == 0:
                     print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                     enemy_win = True
+            sleep(2)
         else:
             print(f'{player["creature"][0]} de {player["nome"]} toma a dianteira e se prepara para atacar!')
             print(f'{enemy["creature"][0]} tomou {player["creature"][3]} de dano...', end=' ')
             enemy["creature"][1] -= player["creature"][3]
+            sleep(2)
             if enemy["creature"][1] <= 0:
                 print(f"e não sobreviveu... Vitória para {player['creature'][0]}")
                 player_win = True
@@ -274,6 +280,7 @@ def battle(player_actions, enemy_actions):
                 if player["creature"][1] == 0:
                     print(f"e não sobreviveu... Vitória para {enemy['creature'][0]}")
                     enemy_win = True
+            sleep(2)
 
         if player_win:
             print(f'Parabéns! Você ganhou a batalha e seu oponente tomou 1 de dano')
@@ -284,6 +291,7 @@ def battle(player_actions, enemy_actions):
             player["hp"] -= 1
         else:
             print("Ninguém morreu dessa vez, se prepare para a próxima batalha!")
+        sleep(2)
 
 
 # Initializing Variables
